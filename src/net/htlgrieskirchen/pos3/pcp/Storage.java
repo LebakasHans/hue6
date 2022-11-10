@@ -43,7 +43,7 @@ public class Storage {
             return queue.poll();
         }
         underflowCounter++;
-        return -1;
+        return null;
     }
 
     public boolean isProductionComplete() {

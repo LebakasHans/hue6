@@ -36,26 +36,28 @@ public class Consumer implements Runnable {
 
     @Override
     public void run() {
-        try {
-            sleep(500);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
+        while(running){
+            boolean productionComplete;
+            boolean noItem;
+            productionComplete = storage.isProductionComplete();
+            Integer test = storage.get();
 
-        do{
-                int test = storage.get();
-                if( test >= 0 ) {
+            if( test != null ) {
                     received.add(test);
-                }else{
-                    running = false;
-                }
+                    noItem = false;
+            }else{
+                noItem = true;
+            }
 
                 try {
                     sleep(sleepTime);
                 } catch (InterruptedException e) {
                     throw new RuntimeException(e);
                 }
-        }while(!storage.isProductionComplete() || running);
+                if(productionComplete && noItem){
+                    running = false;
+                }
+        }
     }
 }
 
