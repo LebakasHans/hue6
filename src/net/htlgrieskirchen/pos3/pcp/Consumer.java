@@ -5,10 +5,14 @@
  */
 package net.htlgrieskirchen.pos3.pcp;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+
+import static java.lang.Thread.sleep;
 
 
-public class Consumer /* implement this */ {
+public class Consumer implements Runnable {
     private final String name;
     private final Storage storage;
     private final int sleepTime;
@@ -17,14 +21,41 @@ public class Consumer /* implement this */ {
     private boolean running;
     
     public Consumer(String name, Storage storage, int sleepTime) {
-        // implement this
+        received = new ArrayList<Integer>();
+
+        this.name = name;
+        this.storage = storage;
+        this.sleepTime = sleepTime;
+        this.running = true;
+        System.out.println(name + " initialized");
     }
- 
-    // implement this
 
     public List<Integer> getReceived() {
-        // implement this
-        return null;
+        return received;
+    }
+
+    @Override
+    public void run() {
+        try {
+            sleep(500);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+
+        do{
+                int test = storage.get();
+                if( test >= 0 ) {
+                    received.add(test);
+                }else{
+                    running = false;
+                }
+
+                try {
+                    sleep(sleepTime);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+        }while(!storage.isProductionComplete() || running);
     }
 }
 

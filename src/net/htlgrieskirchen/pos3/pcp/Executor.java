@@ -32,9 +32,13 @@ public class Executor {
         threadPool.execute(c2);
 
         Producer p = new Producer("P", s, t3, t4);
-       
+        threadPool.execute(p);
+
+        /*
         Future producerStatus1 = threadPool.submit(p);
         producerStatus1.get();
+
+         */
 
         threadPool.shutdown();
         threadPool.awaitTermination(1, TimeUnit.MINUTES);

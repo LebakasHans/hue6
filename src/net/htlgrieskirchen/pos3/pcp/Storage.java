@@ -7,7 +7,8 @@ package net.htlgrieskirchen.pos3.pcp;
 
 import java.util.concurrent.ArrayBlockingQueue;
 
-public class Storage { 
+public class Storage {
+    private final static int QUEUE_CAPACITY = 10;
     private final ArrayBlockingQueue<Integer> queue;
     
     private int fetchedCounter;
@@ -17,45 +18,55 @@ public class Storage {
     private boolean productionComplete;
     
     public Storage() {
-        // implement this
+        queue = new ArrayBlockingQueue<Integer>(QUEUE_CAPACITY);
+        fetchedCounter = 0;
+        storedCounter = 0;
+        underflowCounter = 0;
+        overflowCounter = 0;
+        productionComplete = false;
     }
     
     public synchronized boolean put(Integer data) throws InterruptedException {
-        // implement this
-        return false;
+        if(queue.size() != QUEUE_CAPACITY) {
+            queue.put(data);
+            storedCounter++;
+            return true;
+        }else{
+            overflowCounter++;
+            return false;
+        }
     }
  
     public synchronized Integer get() {
-        // implement this
-        return null;
+        if(!queue.isEmpty()) {
+            fetchedCounter++;
+            return queue.poll();
+        }
+        underflowCounter++;
+        return -1;
     }
 
     public boolean isProductionComplete() {
-        // implement this
-        return false;
+        return productionComplete;
     }
 
     public void setProductionComplete() {
-        // implement this
+        productionComplete = true;
     }
 
     public int getFetchedCounter() {
-        // implement this
-        return -1;
+        return fetchedCounter;
     }
 
     public int getStoredCounter() {
-        // implement this
-        return -1;
+        return storedCounter;
     }
 
     public int getUnderflowCounter() {
-        // implement this
-        return -1;
+        return underflowCounter;
     }
 
     public int getOverflowCounter() {
-        // implement this
-        return -1;
+        return overflowCounter;
     }
 }
